@@ -11,15 +11,15 @@ function ask(questionText) {
 
 async function start() {
   console.log("Let's play a game where you (human) make up a number and I (computer) try to guess it.")
-  numInt();
+  await numInt();
   async function numInt() {
     let secretNumber = await ask("What is your secret number?\nI won't peek, I promise...\n");
-    if (isNaN(parseInt(secretNumber))) {    //Ensures user enters a number
-      console.log("Please enter an number...\n");
-      numInt();
+    if (isNaN(parseInt(secretNumber)) || parseFloat(secretNumber) % 1 != 0) {    //Ensures user enters an integer
+      console.log("Please enter an integer...\n");
+      await numInt();
     } else {
       console.log('You entered: ' + secretNumber);
-      playComp(secretNumber);
+      await playComp(secretNumber);
     }
   }
 }
@@ -39,8 +39,12 @@ async function playComp(num) {
       let yesNo = await ask(`Is the number .... ${numGuess}? Y or N?  `);
       if (yesNo.toUpperCase() === 'Y') {
         guessCount += 1;
-        console.log(`Got it! Your number is ${numGuess}! \nIt took me ${guessCount} guesses!`)
-        process.exit();
+        console.log(`Got it! Your number is ${numGuess}! \nIt took me ${guessCount} guesses!`);
+        console.log("Let's play another game where I (computer) think of a number and you (human) try to geuss it.");
+        max = process.argv[2];
+        min = 1;
+        guessCount = 0;
+        await playHuman();
       } else if (yesNo.toUpperCase() === 'N') {
         if (numGuess === parseInt(num)) {
           console.log(`You think you are tricky don't you, but I know that your number is ${numGuess}!`); //determines if player lies about answer
@@ -76,13 +80,27 @@ async function playComp(num) {
 
 }
 
-//async function playHuman () {
-//  let compSecretNumber = Math.floor((parseInt(max)+min)/2);
-//  let playerGuess = await ask(`I'm thinking of a number between 1 and ${max}, what do you think it is?`);
-//  if (playerGuess === compSecretNumber) {
-//    guessCount +=1;
-//    console.log(`How do you do it!?  Yes, ${playerGuess} is the number I was thinking of!\nYou got it in ${guessCount} guesses!`)
-//  }  else if {}
-//}
+async function playHuman () {
+  let compSecretNumber = Math.floor(Math.random()*parseInt(max)+1);
+  let playerGuess = await ask(`I'm thinking of a number between 1 and ${max}, what do you think it is?  `);
+  compDetermine();
+  async function compDetermine() {
+    if (parseInt(playerGuess) === compSecretNumber) {
+      guessCount +=1;
+      console.log(`How do you do it!?  Yes, ${playerGuess} is the number I was thinking of!\nYou got it in ${guessCount} guesses!`);
+      process.exit();
+    }  else if (parseInt(playerGuess) < compSecretNumber) {
+      max = playerGuess;
+      guessCount += 1;
+      playerGuess = await ask(`That is incorrect!  My number is higher than ${playerGuess}, please guess a new number.\n`);
+      compDetermine();
+    } else {
+      min = playerGuess;
+      guessCount += 1;
+      playerGuess = await ask(`That is incorrect!  My number is lower than ${playerGuess}, please guess a new number.\n`);
+      compDetermine();
+    }
+  }
+}
 
 start();
