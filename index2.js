@@ -66,8 +66,8 @@ function guess(min, max) {
 
 async function playComp() {  //computer guesses human number
     console.log("Let's play a game where you (human) make up a number and I (computer) try to guess it.");
-    max = await ask("First off, lets pick a range to guess from.  We will start with a minimum of 1, what should our maximum be?\n");
-    max = await isInteger(max);
+    max = await ask("First off, lets pick a range to guess from.  We will start with a minimum of 1.\nWhat should our maximum be?\n");
+    max = await isInteger(max);  //ensures max is an integer
     let secretNumber = await ask("What is your secret number?\nI won't peek, I promise...\n");
     myNum = await isInteger(secretNumber);
     while (myNum > max) {  //ensures player picks a number within range
@@ -124,8 +124,8 @@ async function playComp() {  //computer guesses human number
 
 async function playHuman() {  //computer guesses human picked number
     console.log("Let's play a game where I (computer) think of a number and you (human) try to geuss it.\n");
-    max = await ask("First off, lets pick a range to guess from.  We will start with a minimum of 1, what should our maximum be?\n");
-    max = await isInteger(max);
+    max = await ask("First off, lets pick a range to guess from.  We will start with a minimum of 1.\nWhat should our maximum be?\n");
+    max = await isInteger(max);  //ensures max is an integer
     let compSecretNumber = Math.floor(Math.random() * parseInt(max) + 1);
     let playerGuess = await ask(`I'm thinking of a number between 1 and ${max}, what do you think it is?\n`);
     playerGuess = await isInteger(playerGuess);
