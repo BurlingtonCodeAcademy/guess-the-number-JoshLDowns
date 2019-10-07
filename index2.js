@@ -46,7 +46,7 @@ async function correctLetter (string, option1, option2) {  //Makes sure user ent
     }
   }
 
-async function isInteger (num) {  //Makes sure user enters an integer
+async function isInteger (num) {  //Makes sure user enters an integer, returns string as integer
     if (!isNaN(parseInt(num)) || !(parseFloat(num) % 1 != 0)) {
         return parseInt(num);
     } else {
@@ -126,14 +126,25 @@ async function playHuman() {  //computer guesses human picked number
 
     while (parseInt(playerGuess) !== compSecretNumber) {
         playerGuess = await isInteger(playerGuess);
+        console.log(min + ' , ' + max);
         if (playerGuess < compSecretNumber) {
-            max = playerGuess;
-            guessCount += 1;
-            playerGuess = await ask(`That is incorrect!  My number is higher than ${playerGuess}, please guess a new number.\n`);
+            if (playerGuess < min) {  //tells player if they are contradicting a previous guess
+                guessCount += 1;
+                playerGuess = await ask(`I already told you my number is GREATER than ${min}, please guess a new number.\n`);
+            } else {
+                min = playerGuess;
+                guessCount += 1;
+                playerGuess = await ask(`That is incorrect!  My number is higher than ${playerGuess}, please guess a new number.\n`);
+                }
         } else {
-            min = playerGuess;
-            guessCount += 1;
-            playerGuess = await ask(`That is incorrect!  My number is lower than ${playerGuess}, please guess a new number.\n`);
+            if (playerGuess > max) {  //tells player if they are contradicting a previous guess
+                guessCount += 1;
+                playerGuess = await ask(`I already told you my number is LESS than ${max}, please guess a new number.\n`);
+            } else {
+                max = playerGuess;
+                guessCount += 1;
+                playerGuess = await ask(`That is incorrect!  My number is lower than ${playerGuess}, please guess a new number.\n`);
+            }
         }
     }
     guessCount += 1;
