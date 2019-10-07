@@ -1,7 +1,7 @@
 const readline = require('readline');
 const rl = readline.createInterface(process.stdin, process.stdout);
 
-let max = process.argv[2];
+let max;
 let min = 1;
 let guessCount = 0;
 
@@ -17,9 +17,9 @@ async function start() {  //Starts the game and allows user to pick which game t
 
     let gameChoice = await ask("Please enter 1 or 2\n");
 
-    if (parseInt(gameChoice) === 1) {
+    if (await isInteger(gameChoice) === 1) {
         playComp();
-    } else if (parseInt(gameChoice) === 2) {
+    } else if (await isInteger(gameChoice) === 2) {
         playHuman();
     }
 }
@@ -65,10 +65,15 @@ function guess(min, max) {
 
 
 async function playComp() {  //computer guesses human number
-    console.log("Let's play a game where you (human) make up a number and I (computer) try to guess it.")
-
+    console.log("Let's play a game where you (human) make up a number and I (computer) try to guess it.");
+    max = await ask("First off, lets pick a range to guess from.  We will start with a minimum of 1, what should our maximum be?\n");
+    max = await isInteger(max);
     let secretNumber = await ask("What is your secret number?\nI won't peek, I promise...\n");
     myNum = await isInteger(secretNumber);
+    while (myNum > max) {  //ensures player picks a number within range
+        myNum = await ask(`Please enter a number less than ${max}...\n`);
+        myNum = await isInteger(myNum);
+    }
     let numGuess = min + Math.floor(Math.random() * (max - min + 1)); //First guess should be random to not give away our secret
     let yesNo = await ask(`Is the number .... ${numGuess}? Y or N?\n`);
 
@@ -77,37 +82,37 @@ async function playComp() {  //computer guesses human number
             yesNo = await ask(`Please be truthful with you answer, is the number .. ${numGuess}?\n`);
         }
         if (await correctLetter(yesNo, 'Y', 'N') === 'N') {
-            if (numGuess === myNum) {
-                console.log(`You think you are tricky don't you, but I know that your number is ${numGuess}!`); //determines if player lies about answer
-                guessCount += 1;
-                console.log(`It took me ${guessCount} guesses!\n`)
-                max = process.argv[2];
-                min = 1;
-                guessCount = 0;
-                await playAgain();
-            } else {
-                let lowHigh = await ask(`Is the number higher or lower than ${numGuess}? H or L?\n`);
-                if (await correctLetter(lowHigh, 'H', 'L') === 'L') {
-                    if (numGuess < myNum) {   //determines if player lies about being lower
-                        console.log('Hey! No cheating!');
-                    } else {
-                        max = numGuess;
-                        numGuess = guess(min, max);
-                        guessCount += 1;
-                    }
+            let lowHigh = await ask(`Is the number higher or lower than ${numGuess}? H or L?\n`);
+            if (await correctLetter(lowHigh, 'H', 'L') === 'L') {
+                if (numGuess < myNum) {   //determines if player lies about being lower
+                    console.log('Hey! No cheating!');
                 } else {
-                    if (numGuess > myNum) {   //determines if player lies about being higher
-                        console.log('Hey! No cheating!');
-                    } else {
-                        min = numGuess;
-                        numGuess = guess(min, max);
-                        guessCount += 1;
-                    }
+                    max = numGuess;
+                    numGuess = guess(min, max);
+                    guessCount += 1;
+                }
+            } else {
+                if (numGuess > myNum) {   //determines if player lies about being higher
+                    console.log('Hey! No cheating!');
+                } else {
+                    min = numGuess;
+                    numGuess = guess(min, max);
+                    guessCount += 1;
                 }
             }
         }
         yesNo = await ask(`Is the number .... ${numGuess}? Y or N?\n`);
-    }
+        }
+        while (numGuess === myNum && await correctLetter(yesNo, 'Y', 'N') === 'N') {
+            console.log(`You think you are tricky don't you, but I know that your number is ${numGuess}!`); //determines if player lies about answer
+            guessCount += 1;
+            console.log(`It took me ${guessCount} guesses!\n`)
+            max = process.argv[2];
+            min = 1;
+            guessCount = 0;
+            await playAgain();
+        }
+    
     guessCount += 1;
     console.log(`Got it! Your number is ${numGuess}! \nIt took me ${guessCount} guesses!\n`);
     max = process.argv[2];
@@ -119,14 +124,14 @@ async function playComp() {  //computer guesses human number
 
 async function playHuman() {  //computer guesses human picked number
     console.log("Let's play a game where I (computer) think of a number and you (human) try to geuss it.\n");
-
+    max = await ask("First off, lets pick a range to guess from.  We will start with a minimum of 1, what should our maximum be?\n");
+    max = await isInteger(max);
     let compSecretNumber = Math.floor(Math.random() * parseInt(max) + 1);
     let playerGuess = await ask(`I'm thinking of a number between 1 and ${max}, what do you think it is?\n`);
     playerGuess = await isInteger(playerGuess);
 
     while (parseInt(playerGuess) !== compSecretNumber) {
         playerGuess = await isInteger(playerGuess);
-        console.log(min + ' , ' + max);
         if (playerGuess < compSecretNumber) {
             if (playerGuess < min) {  //tells player if they are contradicting a previous guess
                 guessCount += 1;
