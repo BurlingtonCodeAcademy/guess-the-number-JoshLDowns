@@ -2,7 +2,7 @@ const readline = require('readline');
 const rl = readline.createInterface(process.stdin, process.stdout);
 
 let max = process.argv[2];
-let min = 0;
+let min = 1;
 let guessCount = 0;
 
 function ask(questionText) {
@@ -75,6 +75,7 @@ async function playComp() {  //computer guesses human number
     while (numGuess !== myNum) {
         while (yesNo.toUpperCase() === 'Y' && myNum !== numGuess) {  //makes sure user answers truthfully
             yesNo = await ask(`Please be truthful with you answer, is the number .. ${numGuess}?\n`);
+        }
         if (await correctLetter(yesNo, 'Y', 'N') === 'N') {
             if (numGuess === myNum) {
                 console.log(`You think you are tricky don't you, but I know that your number is ${numGuess}!`); //determines if player lies about answer
@@ -106,7 +107,6 @@ async function playComp() {  //computer guesses human number
             }
         }
         yesNo = await ask(`Is the number .... ${numGuess}? Y or N?\n`);
-        }
     }
     guessCount += 1;
     console.log(`Got it! Your number is ${numGuess}! \nIt took me ${guessCount} guesses!\n`);
