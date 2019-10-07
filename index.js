@@ -1,4 +1,20 @@
-const readline = require('readline');
+//PLEASE IGNORE THIS CODE!
+//I want to save it to play with later once I understand recursive functions and promises a little better :)
+
+//The actual game exists under index2.js!
+
+
+
+
+
+
+
+
+
+
+
+
+/*const readline = require('readline');
 const rl = readline.createInterface(process.stdin, process.stdout);
 
 let max = process.argv[2];
@@ -129,3 +145,4 @@ async function playHuman () {
 }
 
 start();
+*/
