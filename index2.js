@@ -47,12 +47,12 @@ async function correctLetter (string, option1, option2) {  //Makes sure user ent
   }
 
 async function isInteger (num) {  //Makes sure user enters an integer, returns string as integer
-    if (!isNaN(parseInt(num)) || !(parseFloat(num) % 1 != 0)) {
+    if (!(parseFloat(num) % 1 !== 0) || (!(parseFloat(num) % 1 !== 0) && !isNaN(parseFloat(num)))) {
         return parseInt(num);
     } else {
-        while (isNaN(parseInt(num)) || parseFloat(num) % 1 != 0) {
+        while (parseFloat(num) % 1 !== 0 || (parseFloat(num) % 1 !== 0 && isNaN(parseFloat(num)))) {
             num = await ask("Please enter an integer...\n");
-            if (!isNaN(parseInt(num)) || !(parseFloat(num) % 1 != 0)) {
+            if (!(parseFloat(num) % 1 !== 0) || (!(parseFloat(num) % 1 !== 0) && !isNaN(parseFloat(num)))) {
                 return parseInt(num);
             }
         }

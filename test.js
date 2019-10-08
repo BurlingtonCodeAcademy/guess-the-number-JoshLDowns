@@ -7,22 +7,36 @@ function ask(questionText) {
     });
   }
 
-
-
-  async function correctLetter (string, option1, option2) {
-    if (string.toUpperCase() === option1 || string.toUpperCase() === option2) {
-      return Promise.resolve(string.toUpperCase());
+  async function isInteger (num) {  //Makes sure user enters an integer, returns string as integer
+    if (parseFloat(num) % 1 === 0) {
+      if (!isNaN(parseInt(num))) {
+        return parseInt(num);
+      }
     } else {
-      while (string.toUpperCase() !== option1 || string.toUpperCase() !== option2) {
-        string = await ask('Please enter a correct option...\n');
-        if (string.toUpperCase() === option1 || string.toUpperCase() === option2) {
-            console.log(Promise.resolve(string.toUpperCase()));
-          return Promise.resolve(string.toUpperCase());
-        }
+        while (parseFloat(num) % 1 !== 0 || isNaN(parseInt(num))) {
+            num = await ask("Please enter an integer...\n");
+            if (!(parseFloat(num) % 1 !== 0) || !isNaN(parseInt(num))) {
+                return parseInt(num);
+            }
         }
     }
-  }
+}
 
+
+ // async function correctLetter (string, option1, option2) {
+ //   if (string.toUpperCase() === option1 || string.toUpperCase() === option2) {
+ //     return Promise.resolve(string.toUpperCase());
+ //   } else {
+ //     while (string.toUpperCase() !== option1 || string.toUpperCase() !== option2) {
+ //       string = await ask('Please enter a correct option...\n');
+ //       if (string.toUpperCase() === option1 || string.toUpperCase() === option2) {
+ //           console.log(Promise.resolve(string.toUpperCase()));
+ //         return Promise.resolve(string.toUpperCase());
+ //       }
+ //       }
+ //   }
+ // }
+//
 /*async function correctLetter (string, option1, option2,) {
   if (string.toUpperCase() === option1 || string.toUpperCase() === option2) {
     return Promise.resolve(string.toUpperCase());
@@ -63,4 +77,4 @@ function ask(questionText) {
   }
 */
 
-console.log(correctLetter('j', 'Y', 'N'));
+console.log(isInteger('3.14'));
