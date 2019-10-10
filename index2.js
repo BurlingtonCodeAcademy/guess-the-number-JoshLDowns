@@ -2,7 +2,7 @@ const readline = require('readline');
 const rl = readline.createInterface(process.stdin, process.stdout);
 
 let max;
-let min = 1;
+let min = 0;
 let guessCount = 0;
 
 function ask(questionText) {
